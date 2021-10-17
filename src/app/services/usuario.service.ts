@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 
 import { environment } from '../../environments/environment';
@@ -18,7 +19,8 @@ export class UsuarioService {
   private url = environment.url;
   constructor(
     private storage: Storage,
-    private http: HttpClient
+    private http: HttpClient,
+    private navCtrl: NavController
     ) {
     this.initStorage();
   }
@@ -31,11 +33,11 @@ export class UsuarioService {
     };
     return new Promise((resolve, reject) => {
       this.http.post<LoginResponse>(`${this.url}/user/login`, data).subscribe(
-        (resp) => {
+        async (resp) => {
           console.log('OK', resp.ok);
           if (resp.ok) {
             console.log(resp.token);
-            this.guardarToken(resp.token);
+            await this.guardarToken(resp.token);
             resolve(true);
           }
         },
@@ -46,6 +48,15 @@ export class UsuarioService {
           reject(err);
         }
       );
+    });
+  }
+
+  logout() {
+    this.token = null;
+    this.usuario = null;
+    this.storage.remove('token');
+    this.navCtrl.navigateRoot('/login', {
+      animated: true
     });
   }
 
@@ -128,9 +139,11 @@ export class UsuarioService {
     });
   }
 
-  private guardarToken(token: string) {
+  private async guardarToken(token: string) {
     this.token = token;
-    this.storage.set('token', token);
+    await this.storage.set('token', token);
+
+    await this.validaToken();
   }
 
   private async initStorage() {

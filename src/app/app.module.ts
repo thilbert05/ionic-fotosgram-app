@@ -15,6 +15,8 @@ import { Drivers } from '@ionic/storage';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -32,7 +34,9 @@ import { Camera } from '@ionic-native/camera/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     Geolocation,
-    Camera
+    Camera,
+    FileTransfer,
+    File
   ],
   bootstrap: [AppComponent],
 })

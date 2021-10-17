@@ -16,13 +16,17 @@ export class TokenInterceptor implements HttpInterceptor {
 
  intercept(req: HttpRequest<any>, next: HttpHandler) {
     const token = this.getToken();
-    const headers = new HttpHeaders({
-      'x-token': token
-    });
-    const modReq = req.clone({
-      headers
-    });
-    return next.handle(modReq);
+    if (token) {
+      const headers = new HttpHeaders({
+        'x-token': token
+      });
+      const modReq = req.clone({
+        headers
+      });
+      return next.handle(modReq);
+    } else {
+      return next.handle(req);
+    }
   }
 
   private getToken() {

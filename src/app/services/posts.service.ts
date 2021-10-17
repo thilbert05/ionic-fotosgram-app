@@ -2,19 +2,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 
+import { UsuarioService } from './usuario.service';
+
 import { environment } from '../../environments/environment';
 
 import { PostResponse, Post, PostsResponse } from '../interfaces/post.interface';
+
+import { FileTransfer, FileTransferObject, FileUploadOptions } from '@ionic-native/file-transfer/ngx';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
   nuevoPost = new EventEmitter<Post>();
+  paginaPost = 0;
   private _baseUrl = environment.url;
-  private _paginaPost = 0;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private usuarioService: UsuarioService, private fileTransfer: FileTransfer) { }
 
   get baseUrl(){
     return this._baseUrl;
@@ -23,12 +27,12 @@ export class PostsService {
   getPosts(pull: boolean = false) {
 
     if (pull) {
-      this._paginaPost = 0;
+      this.paginaPost = 0;
     }
 
-    this._paginaPost++;
+    this.paginaPost++;
     return this.http.get<PostsResponse>(
-      `${this.baseUrl}/posts/?pagina=${this._paginaPost}&porPagina=10`
+      `${this.baseUrl}/posts/?pagina=${this.paginaPost}&porPagina=10`
     );
   }
 
@@ -45,6 +49,28 @@ export class PostsService {
           reject(err);
         });
     });
+  }
+
+  async subirImagen(img: string) {
+    await this.usuarioService.cargarToken();
+    const options: FileUploadOptions = {
+      fileKey: 'image',
+      httpMethod: 'POST',
+      headers: {
+        'x-token': this.usuarioService.token
+      }
+    };
+
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+
+    fileTransfer
+      .upload(img, `${this.baseUrl}/posts/upload`, options)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log('error en subir la imagen', err);
+      });
   }
 
 }

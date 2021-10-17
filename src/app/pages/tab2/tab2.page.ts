@@ -34,7 +34,7 @@ export class Tab2Page {
     private router: Router,
     private uiService: UiService,
     private geoLocation: Geolocation,
-    private camera: Camera
+    private camera: Camera,
   ) {}
 
   async crearPost() {
@@ -42,6 +42,7 @@ export class Tab2Page {
       const creado = await this.postsService.crearPost(this.post);
       this.post = {};
       this.router.navigateByUrl('/main/tabs/tab1');
+      this.tempImages = [];
     } catch (err) {
       this.uiService.alertaInformativa(err.error.message);
     }
@@ -62,7 +63,7 @@ export class Tab2Page {
     }
   }
 
-  getPhoto() {
+  useCamera() {
     const options: CameraOptions = {
       quality: 60,
       destinationType: this.camera.DestinationType.FILE_URI,
@@ -72,12 +73,33 @@ export class Tab2Page {
       sourceType: this.camera.PictureSourceType.CAMERA
     };
 
-    this.camera.getPicture(options).then((imageData) => {
-      const img = window.Ionic.WebView.convertFileSrc(imageData);
-      console.log(img);
-      this.tempImages.push(img);
-    }).catch((err) => {
-      console.log(err);
-    });
+    this.procesarImagen(options);
+  }
+
+  useGallery() {
+    const options: CameraOptions = {
+      quality: 60,
+      destinationType: this.camera.DestinationType.FILE_URI,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
+    };
+
+    this.procesarImagen(options);
+  }
+
+  private procesarImagen(options: CameraOptions) {
+    this.camera
+      .getPicture(options)
+      .then((imageData) => {
+        const img = window.Ionic.WebView.convertFileSrc(imageData);
+        console.log(img);
+        this.postsService.subirImagen(imageData);
+        this.tempImages.push(img);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }

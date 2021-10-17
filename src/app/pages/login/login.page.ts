@@ -57,7 +57,9 @@ export class LoginPage implements OnInit {
       }
     } catch (error) {
       console.log(error);
-      this.uiService.alertaInformativa(error.error.message);
+      if (error.error.message) {
+        await this.uiService.alertaInformativa(error.error.message);
+      }
     }
   }
 
@@ -78,7 +80,9 @@ export class LoginPage implements OnInit {
 
     } catch (error) {
       // console.log(error);
-      this.uiService.alertaInformativa(error.error.message);
+      if (error.error.message) {
+        await this.uiService.alertaInformativa(error.error.message);
+      }
     }
   }
 
