@@ -1,7 +1,11 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+
 import { environment } from '../../../environments/environment';
 
-declare const mapboxgl: any;
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl';
+
+
+// declare const mapboxgl: any;
 
 @Component({
   selector: 'app-mapa',
@@ -10,7 +14,7 @@ declare const mapboxgl: any;
 })
 export class MapaComponent implements OnInit {
   @Input() coords: string;
-  @ViewChild('mapa', {static: true}) mapa: ElementRef<HTMLElement>;
+  @ViewChild('mapa', {static: true}) mapa: ElementRef<HTMLDivElement>;
   constructor() { }
 
   ngOnInit() {

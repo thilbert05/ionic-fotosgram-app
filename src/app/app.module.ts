@@ -14,6 +14,7 @@ import * as CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { Drivers } from '@ionic/storage';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,7 +31,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    Geolocation
+    Geolocation,
+    Camera
   ],
   bootstrap: [AppComponent],
 })
